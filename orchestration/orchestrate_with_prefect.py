@@ -25,17 +25,31 @@ from text_processing import TextProcessing
 warnings.filterwarnings("ignore")
 
 
+# @task(retries=3, retry_delay_seconds=2,
+#       name="Text processing task", 
+#       tags=["pos_tag"])
+# def text_processing_task(language: str, file_name: str, version: int):
+#     """This task is used to run the text processing process
+#     Args:
+#         language (str): language of the text
+#         file_name (str): file name of the data
+#         version (int): version of the data
+#     Returns:
+#         None"""
+#     text_processing_processor = TextProcessing(language=language)
+#     text_processing_processor.run(file_name=file_name, version=version)
+
 @task(retries=3, retry_delay_seconds=2,
       name="Text processing task", 
       tags=["pos_tag"])
 def text_processing_task(language: str, file_name: str, version: int):
-    """This task is used to run the text processing process
-    Args:
-        language (str): language of the text
-        file_name (str): file name of the data
-        version (int): version of the data
-    Returns:
-        None"""
+    """This task is used to run the text processing process"""
+    
+    # Download required NLTK data
+    import nltk
+    nltk.download('stopwords', quiet=True)  # Downloads the stopwords list
+    nltk.download('averaged_perceptron_tagger', quiet=True)  # For POS tagging
+    
     text_processing_processor = TextProcessing(language=language)
     text_processing_processor.run(file_name=file_name, version=version)
 

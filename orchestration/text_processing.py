@@ -14,24 +14,44 @@ import datetime
 warnings.filterwarnings("ignore")
 
 
-class TextProcessing:
-    """This class is used to process the text,
-    contains methods to tokenize, remove stopwords, lemmatize and pos_tagging the text
-    then, this data transformed to a dataframe and saved to a CSV file
-    The idea is to use this class in the pipeline to feature extration process"""
+# class TextProcessing:
+#     """This class is used to process the text,
+#     contains methods to tokenize, remove stopwords, lemmatize and pos_tagging the text
+#     then, this data transformed to a dataframe and saved to a CSV file
+#     The idea is to use this class in the pipeline to feature extration process"""
 
-    def __init__(self, language: str):
-        """This class is used to process the text
-        Class parameters:
-            lenguage (str): Language of the text to process
-        """
+#     def __init__(self, language: str):
+#         """This class is used to process the text
+#         Class parameters:
+#             lenguage (str): Language of the text to process
+#         """
+#         logging.basicConfig(level=logging.INFO)
+#         self.logger = logging.getLogger(__name__)
+
+#         nltk.download("averaged_perceptron_tagger")
+#         self.language = language
+        # self.stop_words = set(stopwords.words(self.language))
+        # self.stemmer = SnowballStemmer(self.language)
+import nltk
+
+class TextProcessing:
+    def __init__(self, language="english"):
+        # 1. INICIALIZAR LOGGER (FALTA ESTO)
         logging.basicConfig(level=logging.INFO)
         self.logger = logging.getLogger(__name__)
-
-        nltk.download("averaged_perceptron_tagger")
+        
+        # 2. Configurar lenguaje y stopwords
         self.language = language
-        self.stop_words = set(stopwords.words(self.language))
+        try:
+            self.stop_words = set(stopwords.words(self.language))
+        except LookupError:
+            print(f"Downloading 'stopwords' corpus for language: {self.language}")
+            nltk.download('stopwords')
+            self.stop_words = set(stopwords.words(self.language))
+        
+        # 3. Inicializar stemmer y descargar POS tagger
         self.stemmer = SnowballStemmer(self.language)
+        nltk.download('averaged_perceptron_tagger', quiet=True)
 
     def tokenize(self, text: str):
         """This method is used to tokenize the text"""
@@ -120,8 +140,8 @@ class TextProcessing:
     def run(self, file_name: str, version: int):
         """Runs the entire text processing pipeline."""
         name_data_input = f"{file_name}"
-        PATH_DATA_RAW = "/Users/mdurango/Proyect/Mlops-platzi/orchestration/data/data_raw"
-        PATH_DATA_PROCESSED = "/Users/mdurango/Proyect/Mlops-platzi/orchestration/data/data_processed"
+        PATH_DATA_RAW = "/workspaces/Mlops-platzi/orchestration/data/data_raw"
+        PATH_DATA_PROCESSED = "/workspaces/Mlops-platzi/orchestration/data/data_processed"
         # reading JSON data
         data_tickets = self.read_json(
             path=PATH_DATA_RAW, file_name=f"{name_data_input}.json"
