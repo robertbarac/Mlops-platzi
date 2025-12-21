@@ -9,3 +9,4 @@ tracking/mlflow.db
 backend.db
 tracking/credentials_aws.py
 orchestration/__pycache__
+tracking/credentials_aws
